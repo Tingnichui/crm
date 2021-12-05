@@ -22,7 +22,8 @@
     <url-pattern>*.do</url-pattern>
     <url-pattern>*.jsp</url-pattern>
   </filter-mapping>
-
+  
+<!--  用户控制器-->
   <servlet>
     <servlet-name>UserController</servlet-name>
     <servlet-class>com.bjpowernode.crm.settings.web.webcontroller.UserController</servlet-class>
@@ -30,7 +31,20 @@
   <servlet-mapping>
     <servlet-name>UserController</servlet-name>
     <url-pattern>/settings/user/login.do</url-pattern>
-    
+  </servlet-mapping>
+  <!--    市场控制器-->
+  <servlet>
+    <servlet-name>ActivityController</servlet-name>
+    <servlet-class>com.bjpowernode.crm.workbench.web.webcontroller.ActivityController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ActivityController</servlet-name>
+    <url-pattern>/workbench/activity/getUserList.do</url-pattern>
+    <url-pattern>/workbench/activity/save.do</url-pattern>
+    <url-pattern>/workbench/activity/pageList.do</url-pattern>
+    <url-pattern>/workbench/activity/delete.do</url-pattern>
+    <url-pattern>/workbench/activity/getUserListAndActivity.do</url-pattern>
+    <url-pattern>/workbench/activity/update.do</url-pattern>
   </servlet-mapping>
 
   

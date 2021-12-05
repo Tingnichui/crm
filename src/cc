@@ -10,3 +10,13 @@ $.ajax({
     }
 
 })
+
+        String id = UUIDUtil.getUUID();
+        String owner = request.getParameter("owner");
+        String name = request.getParameter("name");
+        String startDate = request.getParameter("startDate");
+        String endDate = request.getParameter("endDate");
+        String cost = request.getParameter("cost");
+        String description = request.getParameter("description");
+        String createTime = DateTimeUtil.getSysTime();
+        String createBy = ((User)request.getSession().getAttribute("user")).getName();
