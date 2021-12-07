@@ -4,9 +4,66 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.bjpowernode.crm.workbench.dao.ClueDao">
-	
-	
-  	
+<!--    创建-->
+	<insert id="save">
+        insert into tbl_clue(
+            id,
+            fullname,
+            appellation,
+            owner,
+            company,
+            job,
+            email,
+            phone,
+            website,
+            mphone,
+            state,
+            source,
+            createBy,
+            createTime,
+            description,
+            contactSummary,
+            nextContactTime,
+            address
+        ) values (
+            #{id},
+            #{fullname},
+            #{appellation},
+            #{owner},
+            #{company},
+            #{job},
+            #{email},
+            #{phone},
+            #{website},
+            #{mphone},
+            #{state},
+            #{source},
+            #{createBy},
+            #{createTime},
+            #{description},
+            #{contactSummary},
+            #{nextContactTime},
+            #{address}
+                         )
+
+    </insert>
+<!--  	pageList-->
+    <select id="pageList" resultType="Clue">
+        select
+        c.fullname,
+        c.company,
+        c.phone,
+        c.mphone,
+        c.source,
+        u.name as owner,
+        c.state
+
+        from tbl_clue c
+        join tbl_user u
+        on c.owner = u.id
+        order by c.createTime desc
+        limit #{skipCount},#{pageSize}
+    </select>
 </mapper>
 
 
