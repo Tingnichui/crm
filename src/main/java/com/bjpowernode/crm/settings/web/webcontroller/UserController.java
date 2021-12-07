@@ -28,6 +28,7 @@ public class UserController extends HttpServlet {
     }
 
     private void login(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println("开始验证账号和密码");
         String loginAct = request.getParameter("loginAct");
         String loginPwd = request.getParameter("loginPwd");
         loginPwd = MD5Util.getMD5(loginPwd);

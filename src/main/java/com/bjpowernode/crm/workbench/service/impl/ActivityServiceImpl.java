@@ -7,6 +7,7 @@ import com.bjpowernode.crm.vo.PaginationVO;
 import com.bjpowernode.crm.workbench.dao.ActivityDao;
 import com.bjpowernode.crm.workbench.dao.ActivityRemarkDao;
 import com.bjpowernode.crm.workbench.domain.Activity;
+import com.bjpowernode.crm.workbench.domain.ActivityRemark;
 import com.bjpowernode.crm.workbench.service.ActivityService;
 
 import java.util.HashMap;
@@ -73,6 +74,47 @@ public class ActivityServiceImpl implements ActivityService {
 
 
         int count = activityDao.update(activity);
+        if (1 != count){
+            flag = false;
+        }
+        return flag;
+    }
+
+    public Activity detail(String id) {
+        Activity activity = activityDao.detail(id);
+
+        return activity;
+    }
+
+    public List<ActivityRemark> getRemarkListById(String activityId) {
+        List<ActivityRemark> activityRemarkList = activityRemarkDao.getListByAid(activityId);
+        return activityRemarkList;
+    }
+
+    public Boolean deleteRemarkById(String id) {
+        Boolean flag = true;
+
+        int count = activityRemarkDao.deleteRemarkById(id);
+        if (1 != count){
+            flag = false;
+        }
+        return flag;
+    }
+
+    public Boolean saveRemark(ActivityRemark ar) {
+        Boolean flag = true;
+
+        int count = activityRemarkDao.save(ar);
+        if (1 != count){
+            flag = false;
+        }
+        return flag;
+    }
+
+    public Boolean updateRemarkById(ActivityRemark activityRemark) {
+        Boolean flag = true;
+
+        int count = activityRemarkDao.updateRemarkById(activityRemark);
         if (1 != count){
             flag = false;
         }

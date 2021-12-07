@@ -37,7 +37,6 @@
 				$("#msg").html("用户名和密码不能为空！")
 				return false
 			}
-
 			$.ajax({
 				url : "settings/user/login.do",
 				data : {

@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 public class UserServiceImpl implements UserService {
+
     private UserDao userDao = SqlSessionUtil.getSqlSession().getMapper(UserDao.class);
 
     public User login(String loginAct, String loginPwd, String ip) throws LoginException {
