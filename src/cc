@@ -1,22 +1,35 @@
-$.ajax({
-    url : "",
-    data : {
+    $.ajax({
+        url : "",
+        data : {
 
-    },
-    type : "",
-    dataType : "json",
-    success : function (data){
+        },
+        type : "",
+        dataType : "json",
+        success : function (data){
 
-    }
+        }
 
-})
+    })
+//日期插件
+    $(".time").datetimepicker({
+        minView: "month",
+        language:  'zh-CN',
+        format: 'yyyy-mm-dd',
+        autoclose: true,
+        todayBtn: true,
+        pickerPosition: "top-left"
+    });
+//复选框
+    $("#qx").click(function (){
+        $("input[name=xz]").prop("checked",this.checked)
+    })
+    //复选框
+    $("#activitySearchBody").on("click",$("input[name=xz]"),function (){
+        $("#qx").prop("checked",$("input[name=xz]").length==$("input[name=xz]:checked").length)
+    })
 
-        String id = UUIDUtil.getUUID();
-        String owner = request.getParameter("owner");
-        String name = request.getParameter("name");
-        String startDate = request.getParameter("startDate");
-        String endDate = request.getParameter("endDate");
-        String cost = request.getParameter("cost");
-        String description = request.getParameter("description");
-        String createTime = DateTimeUtil.getSysTime();
-        String createBy = ((User)request.getSession().getAttribute("user")).getName();
+// 数据字典
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+	<c:forEach items="${appellation}" var="a">
+        <option value="${a.value}">${a.text}</option>
+	</c:forEach>

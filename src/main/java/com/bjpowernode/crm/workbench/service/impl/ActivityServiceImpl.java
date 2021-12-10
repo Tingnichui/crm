@@ -8,6 +8,7 @@ import com.bjpowernode.crm.workbench.dao.ActivityDao;
 import com.bjpowernode.crm.workbench.dao.ActivityRemarkDao;
 import com.bjpowernode.crm.workbench.domain.Activity;
 import com.bjpowernode.crm.workbench.domain.ActivityRemark;
+import com.bjpowernode.crm.workbench.domain.Clue;
 import com.bjpowernode.crm.workbench.service.ActivityService;
 
 import java.util.HashMap;
@@ -119,5 +120,20 @@ public class ActivityServiceImpl implements ActivityService {
             flag = false;
         }
         return flag;
+    }
+
+    public List<Activity> getActivityListByClueId(String id) {
+        List<Activity> list = activityDao.getActivityListByClueId(id);
+        return list;
+    }
+
+    public List<Activity> getActivityListByNameAndNotByClueId(Map<String, String> map) {
+        List<Activity> list = activityDao.getActivityListByNameAndNotByClueId(map);
+        return list;
+    }
+
+    public List<Activity> getActivityListByName(String aname) {
+        List<Activity> list = activityDao.getActivityListByName(aname);
+        return list;
     }
 }

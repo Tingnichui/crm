@@ -17,11 +17,22 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
 <script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
+	<link rel="stylesheet" type="text/css" href="jquery/bs_pagination/jquery.bs_pagination.min.css">
+	<script type="text/javascript" src="jquery/bs_pagination/jquery.bs_pagination.min.js"></script>
+	<script type="text/javascript" src="jquery/bs_pagination/en.js"></script>
 
 <script type="text/javascript">
 
 	$(function(){
 		pageList(1,2)
+		//复选框
+		$("#qx").click(function (){
+			$("input[name=xz]").prop("checked",this.checked)
+		})
+		//复选框
+		$("#clueBody").on("click",$("input[name=xz]"),function (){
+			$("#qx").prop("checked",$("input[name=xz]").length==$("input[name=xz]:checked").length)
+		})
 	//	创建
 		$("#saveBtn").click(function (){
 			$.ajax({
@@ -48,13 +59,14 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 				success : function (data){
 					//data{"success":true/false}
 					if (data.success){
-						//刷新列表 略过
+						pageList(1,$("#cluePage").bs_pagination('getOption', 'rowsPerPage'));
 						$("#createClueModal").modal("hide")
 					}else{
 						alert("创建失败")
 					}
 				}
 			})
+
 		})
 	//	跳转创建模态窗口
 		$("#addBtn").click(function (){
@@ -83,6 +95,19 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 			todayBtn: true,
 			pickerPosition: "top-left"
 		});
+	//	条件搜索
+		$("#searchBtn").click(function (){
+			$("#hidden-fullname").val($.trim($("#search-fullname").val()))
+			$("#hidden-company").val($.trim($("#search-company").val()))
+			$("#hidden-phone").val($.trim($("#search-phone").val()))
+			$("#hidden-mphone").val($.trim($("#search-mphone").val()))
+			$("#hidden-source").val($.trim($("#search-source").val()))
+			$("#hidden-owner").val($.trim($("#search-owner").val()))
+			$("#hidden-state").val($.trim($("#search-state").val()))
+
+			pageList(1,$("#cluePage").bs_pagination('getOption', 'rowsPerPage'));
+
+		})
 	});
 	//分页
 	function pageList(pageNo,pageSize) {
@@ -91,18 +116,23 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 			data: {
 				"pageNo": pageNo,
 				"pageSize": pageSize,
+				"fullname":$.trim($("#hidden-fullname").val()),
+				"company":$.trim($("#hidden-company").val()),
+				"phone":$.trim($("#hidden-phone").val()),
+				"mphone":$.trim($("#hidden-mphone").val()),
+				"source":$.trim($("#hidden-source").val()),
+				"owner":$.trim($("#hidden-owner").val()),
+				"state":$.trim($("#hidden-state").val())
 			},
 			type: "get",
 			dataType: "json",
 			success: function (data) {
-				//data["dataList",[{c1},{c2},{c3}...]]
+				//data{"pgVo",pgVo}
 				var html = ""
-				alert(data)
-				$.each(data, function (i, n) {
-					alert(1111)
+				$.each(data.dataList, function (i, n) {
 					html += '<tr>'
-					html += '<td><input type="checkbox" /></td>'
-					html += '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'workbench/clue/detail.jsp\';">'+n.fullname+'</a></td>'
+					html += '<td><input type="checkbox" name="xz" value="'+n.id+'"/></td>'
+					html += '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'workbench/clue/detail.do?id='+n.id+'\';">'+n.fullname+'</a></td>'
 					html += '<td>'+n.company+'</td>'
 					html += '<td>'+n.phone+'</td>'
 					html += '<td>'+n.mphone+'</td>'
@@ -112,13 +142,38 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 					html += '</tr>'
 				})
 				$("#clueBody").html(html)
+				var totalPages = data.total % pageSize == 0 ? data.total / pageSize : parseInt(data.total / pageSize) + 1
+				$("#cluePage").bs_pagination({
+					currentPage: pageNo, // 页码
+					rowsPerPage: pageSize, // 每页显示的记录条数
+					maxRowsPerPage: 20, // 每页最多显示的记录条数
+					totalPages: totalPages, // 总页数
+					totalRows: data.total, // 总记录条数
+
+					visiblePageLinks: 3, // 显示几个卡片
+
+					showGoToPage: true,
+					showRowsPerPage: true,
+					showRowsInfo: true,
+					showRowsDefaultInfo: true,
+
+					onChangePage: function (event, data) {
+						pageList(data.currentPage, data.rowsPerPage)
+					}
+				})
 			}
 		})
 	}
 </script>
 </head>
 <body>
-
+<input type="hidden" id="hidden-fullname"/>
+<input type="hidden" id="hidden-company"/>
+<input type="hidden" id="hidden-phone"/>
+<input type="hidden" id="hidden-mphone"/>
+<input type="hidden" id="hidden-source"/>
+<input type="hidden" id="hidden-owner"/>
+<input type="hidden" id="hidden-state"/>
 	<!-- 创建线索的模态窗口 -->
 	<div class="modal fade" id="createClueModal" role="dialog">
 		<div class="modal-dialog" role="document" style="width: 90%;">
@@ -302,9 +357,9 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 							<label for="edit-clueOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
 								<select class="form-control" id="edit-clueOwner">
-								  <option>zhangsan</option>
-								  <option>lisi</option>
-								  <option>wangwu</option>
+									<c:forEach items="${owner}" var="s">
+										<option value="${s.value}">${s.text}</option>
+									</c:forEach>
 								</select>
 							</div>
 							<label for="edit-company" class="col-sm-2 control-label">公司<span style="font-size: 15px; color: red;">*</span></label>
@@ -425,13 +480,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 	</div>
 
 
-	<input type="hidden" id="hidden-fullname"/>
-	<input type="hidden" id="hidden-company"/>
-	<input type="hidden" id="hidden-phone"/>
-	<input type="hidden" id="hidden-mphone"/>
-	<input type="hidden" id="hidden-source"/>
-	<input type="hidden" id="hidden-owner"/>
-	<input type="hidden" id="hidden-state"/>
+
 
 	<div>
 		<div style="position: relative; left: 10px; top: -10px;">
@@ -451,28 +500,28 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">名称</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control" type="text" id="search-fullname">
 				    </div>
 				  </div>
 				  
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">公司</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control" type="text" id="search-company">
 				    </div>
 				  </div>
 				  
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">公司座机</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control" type="text" id="search-phone">
 				    </div>
 				  </div>
 				  
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">线索来源</div>
-					  <select class="form-control">
+					  <select class="form-control" id="search-source">
 					  	  <option></option>
 						  <c:forEach items="${source}" var="s">
 							  <option value="${s.value}">${s.text}</option>
@@ -486,7 +535,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">所有者</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control" type="text" id="search-owner">
 				    </div>
 				  </div>
 				  
@@ -495,14 +544,14 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">手机</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control" type="text" id="search-mphone">
 				    </div>
 				  </div>
 				  
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">线索状态</div>
-					  <select class="form-control">
+					  <select class="form-control" id="search-state">
 					  	<option></option>
 						  <c:forEach items="${clueState}" var="s">
 							  <option value="${s.value}">${s.text}</option>
@@ -511,7 +560,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 				    </div>
 				  </div>
 
-				  <button type="submit" class="btn btn-default">查询</button>
+				  <button type="button" id="searchBtn" class="btn btn-default">查询</button>
 				  
 				</form>
 			</div>
@@ -554,7 +603,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 			</div>
 			
 			<div style="height: 50px; position: relative;top: 60px;">
-				<div>
+				<div id="cluePage"></div>
+				<%--<div>
 					<button type="button" class="btn btn-default" style="cursor: default;">共<b>50</b>条记录</button>
 				</div>
 				<div class="btn-group" style="position: relative;top: -34px; left: 110px;">
@@ -572,6 +622,9 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 					<button type="button" class="btn btn-default" style="cursor: default;">条/页</button>
 				</div>
 				<div style="position: relative;top: -88px; left: 285px;">
+					<div id="cluePage">
+
+					</div>
 					<nav>
 						<ul class="pagination">
 							<li class="disabled"><a href="#">首页</a></li>
@@ -585,7 +638,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 							<li class="disabled"><a href="#">末页</a></li>
 						</ul>
 					</nav>
-				</div>
+				</div>--%>
 			</div>
 			
 		</div>

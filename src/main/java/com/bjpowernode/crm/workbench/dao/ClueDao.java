@@ -9,5 +9,15 @@ public interface ClueDao {
 
     int save(Clue clue);
 
-    List<Clue> pageList(Map<String, Integer> map);
+    int getTotalByCondition(Map<String, Object> map);
+
+    List<Clue> getListByCondition(Map<String, Object> map);
+
+    Clue getById(String id);
+
+    int unbund(String id);
+
+    Clue getByIdInit(String clueId);
+
+    int delete(String clueId);
 }

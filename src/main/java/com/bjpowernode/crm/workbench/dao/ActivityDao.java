@@ -1,6 +1,7 @@
 package com.bjpowernode.crm.workbench.dao;
 
 import com.bjpowernode.crm.workbench.domain.Activity;
+import com.bjpowernode.crm.workbench.domain.Clue;
 
 import java.util.List;
 import java.util.Map;
@@ -20,4 +21,9 @@ public interface ActivityDao {
 
     Activity detail(String id);
 
+    List<Activity> getActivityListByClueId(String id);
+
+    List<Activity> getActivityListByNameAndNotByClueId(Map<String, String> map);
+
+    List<Activity> getActivityListByName(String aname);
 }

@@ -11,6 +11,7 @@ import com.bjpowernode.crm.utils.UUIDUtil;
 import com.bjpowernode.crm.vo.PaginationVO;
 import com.bjpowernode.crm.workbench.domain.Activity;
 import com.bjpowernode.crm.workbench.domain.Clue;
+import com.bjpowernode.crm.workbench.domain.Tran;
 import com.bjpowernode.crm.workbench.service.ActivityService;
 import com.bjpowernode.crm.workbench.service.ClueService;
 import com.bjpowernode.crm.workbench.service.impl.ActivityServiceImpl;
@@ -36,7 +37,114 @@ public class ClueController extends HttpServlet {
             save(request,response);
         }else if ("/workbench/clue/pageList.do".equals(path)){
             pageList(request,response);
+        }else if ("/workbench/clue/detail.do".equals(path)){
+            detail(request,response);
+        }else if ("/workbench/clue/getActivityListByClueId.do".equals(path)){
+            getActivityListByClueId(request,response);
+        }else if ("/workbench/clue/unbund.do".equals(path)){
+            unbund(request,response);
+        }else if ("/workbench/clue/getActivityListByNameAndNotByClueId.do".equals(path)){
+            getActivityListByNameAndNotByClueId(request,response);
+        }else if ("/workbench/activity/bund.do".equals(path)){
+            bund(request,response);
+        }else if ("/workbench/clue/getActivityListByName.do".equals(path)){
+            getActivityListByName(request,response);
+        }else if ("/workbench/clue/convert.do".equals(path)){
+            convert(request,response);
         }
+    }
+
+    private void convert(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String flag = request.getParameter("flag");
+        String clueId = request.getParameter("clueId");
+        String createBy = ((User)request.getSession().getAttribute("user")).getName();
+        Tran t = null;
+        if ("f".equals(flag)){
+            t = new Tran();
+            String money = request.getParameter("money") ;
+            String name = request.getParameter("name") ;
+            String activityId = request.getParameter("activityId") ;
+            String stage = request.getParameter("stage") ;
+            String expectedDate = request.getParameter("expectedDate") ;
+            String id = UUIDUtil.getUUID();
+            String createTime = DateTimeUtil.getSysTime();
+
+            t.setMoney(money);
+            t.setName(name);
+            t.setActivityId(activityId);
+            t.setStage(stage);
+            t.setExpectedDate(expectedDate);
+            t.setId(id);
+            t.setCreateTime(createTime);
+            t.setCreateBy(createBy);
+        }
+        ClueService clueService = (ClueService) ServiceFactory.getService(new ClueServiceImpl());
+        Boolean flag1 = clueService.convert(clueId,t,createBy);
+
+        if (flag1){
+            response.sendRedirect(request.getContextPath()+"/workbench/clue/index.jsp");
+        }
+
+    }
+
+    private void getActivityListByName(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println("关联活动查询操作");
+        String aname = request.getParameter("aname");
+//        String clueId =request.getParameter("clueId");
+//        Map<String,String> map = new HashMap<String, String>();
+//        map.put("aname",aname);
+//        map.put("clueId",clueId);
+        ActivityService activityService = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+        List<Activity> list = activityService.getActivityListByName(aname);
+        PrintJson.printJsonObj(response,list);
+    }
+
+    private void bund(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println("关联操作");
+        String cid = request.getParameter("cid");
+        String[] aid = request.getParameterValues("aid");
+        ClueService clueService = (ClueService) ServiceFactory.getService(new ClueServiceImpl());
+        Boolean flag = clueService.bund(cid,aid);
+        PrintJson.printJsonFlag(response,flag);
+    }
+
+    private void getActivityListByNameAndNotByClueId(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println("关联活动查询操作");
+        String aname = request.getParameter("aname");
+        String clueId =request.getParameter("clueId");
+        Map<String,String> map = new HashMap<String, String>();
+        map.put("aname",aname);
+        map.put("clueId",clueId);
+        ActivityService activityService = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+        List<Activity> list = activityService.getActivityListByNameAndNotByClueId(map);
+        PrintJson.printJsonObj(response,list);
+
+    }
+
+    private void unbund(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println("解除关联操作");
+        String id = request.getParameter("id");
+        ClueService clueService = (ClueService) ServiceFactory.getService(new ClueServiceImpl());
+        Boolean flag = clueService.unbund(id);
+        PrintJson.printJsonFlag(response,flag);
+
+    }
+
+    private void getActivityListByClueId(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println("根据线索id查询关联的市场活动列表");
+        String id = request.getParameter("id");
+        ActivityService activityService = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+        List<Activity> list = activityService.getActivityListByClueId(id);
+        PrintJson.printJsonObj(response,list);
+    }
+
+    private void detail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("进入详细信息页");
+        String id = request.getParameter("id");
+        ClueService clueService = (ClueService) ServiceFactory.getService(new ClueServiceImpl());
+        Clue clue = clueService.detail(id);
+        request.setAttribute("clue",clue);
+        request.getRequestDispatcher("/workbench/clue/detail.jsp").forward(request,response);
     }
 
     private void pageList(HttpServletRequest request, HttpServletResponse response) {
@@ -44,13 +152,28 @@ public class ClueController extends HttpServlet {
         String pageNo = request.getParameter("pageNo");
         int pageSize = Integer.valueOf(request.getParameter("pageSize"));
         int skipCount = (Integer.valueOf(pageNo)-1)*Integer.valueOf(pageSize);
+        String fullname = request.getParameter("fullname");
+        String company = request.getParameter("company");
+        String phone = request.getParameter("phone");
+        String mphone = request.getParameter("mphone");
+        String source = request.getParameter("source");
+        String owner = request.getParameter("owner");
+        String state = request.getParameter("state");
 
-        Map<String,Integer> map = new HashMap<String, Integer>();
+
+        Map<String,Object> map = new HashMap<String, Object>();
         map.put("skipCount",skipCount);
         map.put("pageSize",pageSize);
+        map.put("fullname",fullname);
+        map.put("company",company);
+        map.put("phone",phone);
+        map.put("mphone",mphone);
+        map.put("source",source);
+        map.put("owner",owner);
+        map.put("state",state);
         ClueService clueService = (ClueService) ServiceFactory.getService(new ClueServiceImpl());
-        List<Clue> dataList = clueService.pageList(map);
-        PrintJson.printJsonObj(response,dataList);
+        PaginationVO<Clue> vo = clueService.pageList(map);
+        PrintJson.printJsonObj(response,vo);
 
     }
 
