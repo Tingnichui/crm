@@ -79,10 +79,8 @@ String company = request.getParameter("company");
 		})
 		$("#converBtn").click(function (){
 			if ($("#isCreateTransaction").prop("checked")){
-				alert(1)
 				$("#tranForm").submit()
 			}else {
-				alert(2)
 				window.location.href = "workbench/clue/convert.do?clueId=${param.id}"
 			}
 		})

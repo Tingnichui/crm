@@ -42,6 +42,49 @@
             #{nextContactTime}
             )
     </insert>
+    <select id="detail" resultType="Tran">
+        select
+            t.id,
+            u.name as owner,
+            t.money,
+            t.name,
+            t.expectedDate,
+            c.name as customerId,
+            t.stage,
+            t.type,
+            t.source,
+            a.name as activityId,
+            cs.fullname as contactsId,
+            t.createBy,
+            t.createTime,
+            t.editBy,
+            t.editTime,
+            t.description,
+            t.contactSummary,
+            t.nextContactTime
+        from tbl_tran t
+        join tbl_user u
+        on u.id = t.owner
+        join tbl_customer c
+        on t.customerId = c.id
+        left join tbl_activity a
+        on t.activityId = a.id
+        join tbl_contacts cs
+        on t.contactsId = cs.id
+        where t.id=#{id}
+    </select>
+
+    <update id="changeStage">
+        update tbl_tran set stage=#{stage},editBy=#{editBy},editTime=#{editTime} where id = #{id}
+    </update>
+    <select id="total" resultType="int">
+        select count(*) from tbl_tran
+    </select>
+    <select id="getCharts" resultType="map">
+        select count(*) as value,stage as name
+        from tbl_tran
+        group by stage
+    </select>
 </mapper>
 
 

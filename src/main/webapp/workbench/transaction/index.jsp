@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <%
 String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/";
 %>
@@ -19,9 +21,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 <script type="text/javascript">
 
 	$(function(){
-		
-		
-		
+
 	});
 	
 </script>
@@ -73,15 +73,9 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 				      <div class="input-group-addon">阶段</div>
 					  <select class="form-control">
 					  	<option></option>
-					  	<option>资质审查</option>
-					  	<option>需求分析</option>
-					  	<option>价值建议</option>
-					  	<option>确定决策者</option>
-					  	<option>提案/报价</option>
-					  	<option>谈判/复审</option>
-					  	<option>成交</option>
-					  	<option>丢失的线索</option>
-					  	<option>因竞争丢失关闭</option>
+						  <c:forEach items="${stage}" var="a">
+							  <option value="${a.value}">${a.text}</option>
+						  </c:forEach>
 					  </select>
 				    </div>
 				  </div>
@@ -91,8 +85,9 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 				      <div class="input-group-addon">类型</div>
 					  <select class="form-control">
 					  	<option></option>
-					  	<option>已有业务</option>
-					  	<option>新业务</option>
+						  <c:forEach items="${transactionType}" var="a">
+							  <option value="${a.value}">${a.text}</option>
+						  </c:forEach>
 					  </select>
 				    </div>
 				  </div>
@@ -102,20 +97,9 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 				      <div class="input-group-addon">来源</div>
 				      <select class="form-control" id="create-clueSource">
 						  <option></option>
-						  <option>广告</option>
-						  <option>推销电话</option>
-						  <option>员工介绍</option>
-						  <option>外部介绍</option>
-						  <option>在线商场</option>
-						  <option>合作伙伴</option>
-						  <option>公开媒介</option>
-						  <option>销售邮件</option>
-						  <option>合作伙伴研讨会</option>
-						  <option>内部研讨会</option>
-						  <option>交易会</option>
-						  <option>web下载</option>
-						  <option>web调研</option>
-						  <option>聊天</option>
+						  <c:forEach items="${source}" var="a">
+							  <option value="${a.value}">${a.text}</option>
+						  </c:forEach>
 						</select>
 				    </div>
 				  </div>
@@ -133,7 +117,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 			</div>
 			<div class="btn-toolbar" role="toolbar" style="background-color: #F7F7F7; height: 50px; position: relative;top: 10px;">
 				<div class="btn-group" style="position: relative; top: 18%;">
-				  <button type="button" class="btn btn-primary" onclick="window.location.href='workbench/transaction/save.jsp';"><span class="glyphicon glyphicon-plus"></span> 创建</button>
+				  <button type="button" class="btn btn-primary" onclick="window.location.href='workbench/transaction/add.do';"><span class="glyphicon glyphicon-plus"></span> 创建</button>
 				  <button type="button" class="btn btn-default" onclick="window.location.href='workbench/transaction/edit.jsp';"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
 				  <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 				</div>
@@ -157,7 +141,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 					<tbody>
 						<tr>
 							<td><input type="checkbox" /></td>
-							<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='workbench/transaction/detail.jsp';">动力节点-交易01</a></td>
+							<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='workbench/transaction/detail.do?id=a09d3044b44f4864ae695d8ebb7d1ec3';">XXOO</a></td>
 							<td>动力节点</td>
 							<td>谈判/复审</td>
 							<td>新业务</td>

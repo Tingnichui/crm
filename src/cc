@@ -10,6 +10,24 @@
         }
 
     })
+    String createBy = ((User)request.getSession().getAttribute("user")).getName();
+    String createTime = DateTimeUtil.getSysTime();
+//  自动补全
+<script type="text/javascript" src="jquery/bs_typeahead/bootstrap3-typeahead.min.js"></script>
+$("#create-customerName").typeahead({
+			source: function (query, process) {
+				$.post(
+						"workbench/transaction/getCustomerName.do",
+						{ "name" : query },
+						function (data) {
+							//alert(data);
+							process(data);
+						},
+						"json"
+				);
+			},
+			delay: 1500
+		});
 //日期插件
     $(".time").datetimepicker({
         minView: "month",
@@ -33,3 +51,7 @@
 	<c:forEach items="${appellation}" var="a">
         <option value="${a.value}">${a.text}</option>
 	</c:forEach>
+
+	<c:forEach items="${userList}" var="a">
+    	<option value="${a.id}" ${user.id eq a.id ? "selected" : ""}>${a.name}</option>
+    </c:forEach>
